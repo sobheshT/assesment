@@ -1,0 +1,122 @@
+<html>
+    <head>
+        <style>
+            ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color:black;
+  }
+  
+  li {
+    float: left;
+  }
+  
+  li a {
+    display: block;
+    color:white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+  
+  li a:hover {
+    background-color: rgb(194, 11, 11);
+  }
+  * {
+    box-sizing: border-box;
+  }
+  .column {
+    float: left;
+    width: 33.33%;
+    padding: 5px;
+  }
+  .row::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 12px 16px;
+    z-index: 1;
+  }
+  
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+  table, th, td {
+    border: 1px solid black;
+  }
+        </style>
+    <script>
+        
+function getdetail()
+{    
+var j=0
+url=`http://localhost:8080/items/display`
+fetch(url)
+.then(res=>res.json())
+.then(data=>{
+createTable(data);
+    })
+const createTable = (data)=>{
+let rows = '';
+data.product.forEach(u => {
+            j++
+ rows += `<tr>
+<td id="">${j}</td>
+<td>${u.name}</td>
+<td>${u.brand}</td>
+<td>${u.price}</td>
+<td><input type="button" value="add to cart" onclick="addcart(${j})"></td>
+
+</tr>`
+});
+const _table = `<table>
+<tr bgcolor="#00FF00">
+        <th>ID</th>
+        <th>Name</th>
+        <th>Brand</th>
+        <th>Price</th>
+        <th><a href="./checkout.html" ><input type="button" value="Checkout"></th>
+        </tr>
+        ${rows}
+</table>`
+document.getElementById('users').innerHTML = _table;
+}
+}
+function addcart(id)
+   {
+     product_id=id
+     url=`http://localhost:8080/items/search/${product_id}`
+    fetch(url)
+    .then(res=>res.json())
+    }
+</script>
+</head>
+<body >
+    <section>
+        <ul>
+                <li class="dropdown"><a href="#products" onclick="getdetail()">Products</a></li>
+                <li><a href="./checkout.html">Checkout</a></li>
+                <!-- <li> <input type="text" placeholder="Search.." size="35"></li> -->
+                <!-- <li><button type="submit" style="padding: 10px 20px;text-align: left;margin: 4px 2px;cursor: pointer;background-color: rgb(20, 23, 167)" value="search"  ></li> -->
+                <li><i class="fa fa-shopping-cart" style="font-size:48px;color:red;"></i></li>
+        </ul>
+        </section>
+    <div id="users"></div>
+    <!-- <div><a href="./checkout.html" ><input type="button" value="Checkout"></a></div> -->
+
+</body>
+</html>

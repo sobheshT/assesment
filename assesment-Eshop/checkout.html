@@ -1,0 +1,187 @@
+<html>
+    <head>
+        <style>
+              ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color:black;
+  }
+  
+  li {
+    float: left;
+  }
+  
+  li a {
+    display: block;
+    color:white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+  
+  li a:hover {
+    background-color: rgb(194, 11, 11);
+  }
+  * {
+    box-sizing: border-box;
+  }
+  .column {
+    float: left;
+    width: 33.33%;
+    padding: 5px;
+  }
+  .row::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 12px 16px;
+    z-index: 1;
+  }
+  
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+table, th, td {
+border: 1px solid black;
+           }
+        </style>
+        <Script src="item.service.js"></SCript>
+    <script>
+        
+function getdetail()
+{
+    url=`http://localhost:8080/items/display1`
+    fetch(url)
+    .then(res=>res.json())
+    .then(data=>{
+
+        createTable(data);
+    })
+    const createTable = (data)=>{
+
+        let rows = '';
+        c=0;
+        num=0;
+        totalprice=0;
+        console.log("here")
+
+        data.product.forEach(u => {
+            
+            total=parseInt(u.price)
+            c++
+            num++
+            rows += `<tr>
+ <td id="name${c}">${u.name}</td>
+ <td id="brand${c}">${u.brand}</td>
+ <td id="price${c}">${u.price}</td>
+ <td id="quant${c}">
+ <input type="button" value="-" id="btn${c}" onclick="change(${c},'dec',${parseInt(u.price)})">
+ <input type="textbox" id="quantity${c}" value="1">
+ <input type="button" value="+" onclick="change(${c},'inc',${parseInt(u.price)})">
+ </td>
+ <td><input type="textbox" id="total${c}" value="${total}"></td>
+ </tr>`
+});
+const _table = `<table bgcolor="#00FF00">
+<tr>
+<th>Product</th>
+<th>Brand</th>
+<th>Price</th>
+<th>Quantity</th>
+<th>Total price</th>
+</tr>
+${rows}
+</table>`
+document.getElementById('users').innerHTML = _table;
+}
+}
+ function change(id,op,price)
+ {   
+    console.log(id)
+    c= parseInt(document.getElementById(`quantity${id}`).value);
+    if (op=='dec'&& c!=0) 
+        c--;
+    if(op=='inc')
+        c++;
+    document.getElementById(`quantity${id}`).value=c;
+    document.getElementById(`total${id}`).value=c*price
+    console.log(c)
+    for(i=1;i<=num;i++)
+        {
+            totalprice=totalprice+parseInt(document.getElementById(`total${i}`).value)
+        }
+    document.getElementById("sum").value=totalprice;
+    totalprice=0;
+
+      /* document.getElementById("x").innerText=quantity*/
+ }   
+ function checkout()
+ {
+     let data ={
+         items : []
+     }
+     url=`http://localhost:8080/items/display1`
+    fetch(url)
+    .then(res=>res.json())
+    .then(cart=>{
+        console.log(cart.product.length);
+        for(i=1;i<=cart.product.length;i++)
+        {
+            data.items.push({
+                name : document.getElementById(`name${i}`).innerText,
+                price : document.getElementById(`price${i}`).innerText,
+                quantity: document.getElementById(`quantity${i}`).value,
+                FinalPrice: document.getElementById("sum").value,
+            })
+        }
+    const requestData =JSON.stringify(data)
+    console.log(requestData)
+    url2="http://localhost:8080/items/mail"
+    fetch(url2,{
+        method:"POST",
+        headers:{
+            'content-type':'application/json'
+        },
+        body: requestData
+    })
+    .then(res=>res.json())
+    .then(res=>{
+        alert("Invoice sent to your email successfully")
+
+    })
+    })
+ }
+    </script>
+</head>
+<body onload="getdetail()">
+    <div>
+            <ul>
+                    <li class="dropdown"><a href="#products" onclick="getdetail()">Products</a></li>
+                    <input type="text" id="to" placeholder="enter email to send mail">
+                    <li><a><input type="button" value="Mail Invoice" onclick="checkout()"></a></li>
+                    
+                    <!-- <li> <input type="text" placeholder="Search.." size="35"></li> -->
+                    <!-- <li><button type="submit" style="padding: 10px 20px;text-align: left;margin: 4px 2px;cursor: pointer;background-color: rgb(20, 23, 167)" value="search"  ></li> -->
+                    <!-- <li><i class="fa fa-shopping-cart" style="font-size:48px;color:red;"></i></li> -->
+            </ul>
+    </div>
+    <div id="users"></div>
+    <div>TOTAL PRICE
+        <input type="text" id="sum" ></div>
+     <!-- <div><input type="button" value="checkout" onclick="checkout()"></div> -->
+</body>
+</html>
