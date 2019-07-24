@@ -1,0 +1,74 @@
+<html>
+    <head>
+            <link rel="stylesheet" href="style.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        
+    <script>
+function getdetail()
+{    
+var j=0
+url=`http://localhost:8080/items/display`
+fetch(url)
+.then(res=>res.json())
+.then(data=>{
+createTable(data)
+    })
+const createTable = (data)=>{
+    let rows = '';
+    data.product.forEach(u => {
+        
+        j++
+        rows += `<tr>
+            <td id="">${j}</td>
+            <td>${u.name}</td>
+            <td>${u.brand}</td>
+            <td>${u.quantity}</td>
+            <td>${u.price}</td>
+            <td><input type="button" value="add to cart" onclick=""></td>
+            
+            </tr>`
+            
+            });
+       const _table = `<table>
+            <tr>
+            <th>ID</th>
+            <th>Products</th>
+            <th>Brand</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th><input type="button" value="checkout" onclick=""></th>
+            </tr>
+            ${rows}
+            </table>`
+    document.getElementById('users').innerHTML = _table;
+    }
+}  
+function addcart(id)
+   {
+     product_id=id
+     
+    url=`http://localhost:8080/items/search/${product_id}`
+    fetch(url)
+    .then(res=>res.json())
+
+   } 
+
+</script>
+</head>
+<body >
+    <section>
+        <ul>
+                
+                <li class="dropdown"><a href="#products" onclick="getdetail()">Products</a></li>
+                <li><a href="">Signin</a></li>
+                <li> <input type="text" placeholder="Search.." size="35"></li>
+                <li><button type="submit" style="padding: 10px 20px;text-align: left;margin: 4px 2px;cursor: pointer;background-color: rgb(20, 23, 167)" value="search"  ></li>
+                <li><i class="fa fa-shopping-cart" style="font-size:48px;color:red;"></i></li>
+        </ul>
+ <div id="users"></div>
+    <div><a href="./checkout.html" >checkout</a></div>
+</section>
+<div id="users"></div>
+
+</body>
+</html>

@@ -1,0 +1,134 @@
+<html>
+    <head>
+    <script>
+        
+function getdetail()
+{
+    url=`http://localhost:8080/items/display1`
+    fetch(url)
+    .then(res=>res.json())
+    .then(data=>{
+
+        createTable(data);
+    })
+    const createTable = (data)=>{
+
+        let rows = '';
+        c=0;
+        num=0;
+        totalprice=0;
+        console.log("here")
+
+        data.product.forEach(u => {
+            
+            total=parseInt(u.price)
+            c++
+            num++
+            
+
+            rows += `<tr>
+
+                        
+
+                        <td id="name${c}">${u.name}</td>
+                        <td id="brand${c}">${u.brand}</td>
+      
+                        <td id="price${c}">${u.price}</td>
+<td id="quant${c}"><input type="button" value="-" id="btn${c}" onclick="change(${c},'dec',${parseInt(u.price)})"><input type="textbox" id="quantity${c}" value="1"><input type="button" value="+" onclick="change(${c},'inc',${parseInt(u.price)})"></td>
+                        <td><input type="textbox" id="total${c}" value="${total}"></td>
+
+                    </tr>`
+
+        });
+
+        const _table = `<table>
+
+                            <tr>
+
+                                <th>name</th>
+
+                                <th>brand</th>
+
+                                <th>price</th>
+
+                                <th>quantity</th>
+                                 <th>total price</th>
+
+                            </tr>
+
+                            ${rows}
+
+                        </table>`
+
+        document.getElementById('users').innerHTML = _table;
+
+
+    }
+}
+ function change(id,op,price)
+ {   
+      console.log(id)
+      c= parseInt(document.getElementById(`quantity${id}`).value);
+     if (op=='dec'&& c!=0) 
+         c--;
+     if(op=='inc')
+       c++;
+      document.getElementById(`quantity${id}`).value=c;
+      document.getElementById(`total${id}`).value=c*price
+
+      console.log(c)
+
+      for(i=1;i<=num;i++)
+        {
+            totalprice=totalprice+parseInt(document.getElementById(`total${i}`).value)
+        }
+        document.getElementById("sum").value=totalprice;
+        totalprice=0;
+
+      /* document.getElementById("x").innerText=quantity*/
+ }   
+ function checkout()
+ {
+     let data ={
+         items : []
+     }
+     url=`http://localhost:8080/items/display1`
+    fetch(url)
+    .then(res=>res.json())
+    .then(cart=>{
+        console.log(cart.product.length);
+        for(i=1;i<=cart.product.length;i++)
+        {
+            data.items.push({
+                name : document.getElementById(`name${i}`).innerText,
+                price : document.getElementById(`price${i}`).innerText,
+                quantity: document.getElementById(`quantity${i}`).value,
+                FinalPrice: document.getElementById("sum").value,
+            })
+        }
+    const requestData =JSON.stringify(data)
+    console.log(requestData)
+    url2="http://localhost:8080/items/mail"
+    fetch(url2,{
+        method:"POST",
+        headers:{
+            'content-type':'application/json'
+        },
+        body: requestData
+    })
+    .then(res=>res.json())
+    .then(res=>{
+        alert("mail sent successfully")
+
+    })
+    })
+ }
+    </script>
+</head>
+<body onload="getdetail()">
+    <div id="users"></div>
+    <div>TOTAL PRICE
+        <input type="text" id="sum" ></div>
+     <div><input type="button" value="checkout" onclick="checkout()"></div>
+</body>
+</html>
