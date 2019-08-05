@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title style="align-content: center"></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script>
+     function verify(){
+        otp=document.getElementById("otp").value
+        email=document.getElementById("email").value
+        pass=document.getElementById("pass").value
+        cnfpass=document.getElementById("cnfpass").value
+
+        var currentdate = new Date(); 
+        var date = currentdate.getDate()
+        var month = currentdate.getMonth()
+        var year = currentdate.getFullYear() 
+         var hours = currentdate.getHours()  
+         var minutes = currentdate.getMinutes() 
+         var sec = currentdate.getSeconds();
+
+         var currdate=date+"/"+month+"/"+year
+         var currhour=hours;
+
+
+        url="http://localhost:5000/register/verify"
+        
+        fetch(url,{
+            method:'GET',
+            headers:{
+                'content-type':'application-type'
+            }
+        }).then(res=>res.json()).then(res=>{
+            console.log(res.data[0].email)
+            console.log(email)
+            if((res.data[0].otp==otp &&res.data[0].email==email)&&(res.data[0].time.slice(0,8)==currdate && res.data[0].time.slice(9,11)==currhour))
+            {   console.log(res.data[0].otp) 
+                document.getElementById("otp").disabled=true
+                document.getElementById("email").disabled=true;
+                document.getElementById("pass").disabled=false;
+                document.getElementById("cnfpass").disabled=false;
+            }
+            else{
+                alert("OTP expired")
+                document.getElementById("otp").disabled=false;
+                document.getElementById("email").disabled=false;
+                document.getElementById("pass").disabled=true;
+                document.getElementById("cnfpass").disabled=true;
+            }
+        })
+     }
+
+
+     function check(){
+        password=document.getElementById("pass").value
+        cnfpass=document.getElementById("cnfpass").value
+        if(password==cnfpass){
+            document.getElementById("cnfpass").style.border="5px solid green"
+            document.getElementById("abc").innerHTML="confirm"
+        }
+        else{
+            document.getElementById("cnfpass").style.border="5px solid red"
+            document.getElementById("abc").innerHTML="notmatched"
+        }
+     }
+
+     function passupdate(){
+        email=document.getElementById("email").value
+        pass=document.getElementById("pass").value
+        url=`http://localhost:5000/register/update/${email}/${pass}`
+        fetch(url).then(res=>res.json()).then(res=>{
+            document.location="profilepage.html"
+        })
+     }
+    </script>
+</head>
+<body>
+   
+   
+<fieldset>
+    
+        <form style="margin-left: 30%; margin-right:30%;margin-top:10%" class="border border-primary">
+               
+                <div class="form-group">
+                   <label for="otp">OTP</label>
+                   <input type="text" class="form-control" id="otp" aria-describedby="nameHelp" placeholder="Enter otp">
+                </div>
+                <div class="form-group">
+                  <label for="email">Email address</label>
+                  <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter Email">
+                </div>
+                <div class="form-group">
+                        <label for="password">password</label>
+                        <input type="password" class="form-control" id="pass" aria-describedby="emailHelp" placeholder="Enter your password">
+                </div>
+                <div class="form-group">
+                        <label for="cnfpass">Re-enter the password</label>
+                        <input type="password" class="form-control" id="pass" aria-describedby="emailHelp" placeholder="Re-Enter your password" oninput="check()">
+                </div>
+                <input type="button" class="btn btn-primary" type="button" value="Verify" onclick="verify()">
+                <input type="button" value="Submit" type="button" class="btn btn-success" onclick="passupdate()">
+                <!-- <input type="button" value="Reset" class="btn btn-warning" > -->
+              </form>
+</fieldset>
+    
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+</body>
+</html>
